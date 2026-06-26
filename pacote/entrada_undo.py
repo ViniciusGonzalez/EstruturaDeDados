@@ -1,19 +1,5 @@
 from ordem import Ordem
-class No:
-    """
-    No generico de encadeamento simples, usado pela Fila e pela Pilha.
-    Guarda um valor e uma referencia para o proximo no.
-    """
 
-    def __init__(self, valor):
-        self.valor = valor   # na Fila e uma Ordem; na Pilha e um ID (int)
-        self.prox = None     # referencia para o proximo no
-
-
-# ---------------------------------------------------------------------
-#  FILA DE ENTRADA  (FIFO - First In, First Out)
-#  Insere no FIM, remove do INICIO. Todas as operacoes em O(1).
-# ---------------------------------------------------------------------
 class Fila:
 
     def __init__(self):
@@ -100,8 +86,9 @@ class Pilha:
     def ve_topo(self):
         """Consulta (sem remover) o elemento do topo. O(1)."""
         if self.esta_vazia():
-            raise Exception("A pilha de undo esta vazia.")
-        return self.topo.id
+            return None
+        else:
+            return self.topo.id
 
     def __str__(self):
         atual = self.topo

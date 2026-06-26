@@ -11,7 +11,7 @@ fila_de_entrada = Fila()
 lista_vendas = ListaVendas()
 lista_compras = ListaCompras()
 pilha_undo = Pilha()
-modo_de_adicao = 1
+modo_de_adicao = "1"
 tempo_padrao = 5
 delay_padrao = 0
 
@@ -26,7 +26,10 @@ def __str__():
        print(f"Temos {fila_de_entrada.tamanho} ordem aguardando na fila de entrada")
     else:
         print(f"Temos {fila_de_entrada.tamanho} ordens aguardando na fila de entrada")
-        print(f"ID da última ordem adicionada ao Livro: {pilha_undo.ve_topo().id}")
+        if pilha_undo.esta_vazia():
+            print("ID da última ordem adicionada ao Livro: -")
+        else:
+            print(f"ID da última ordem adicionada ao Livro: {pilha_undo.ve_topo().id:010d}")
         print("-"*70)
         print(f"{'Operação':>23}"+"|"+f"{'Preço (R$)':^23}"+"|"+f"{'Quantidade':^23}")
         print("-"*23+"|"+"-"*23+"|"+"-"*23)
@@ -90,11 +93,12 @@ while True:
 
     elif modo_de_adicao == "2":
         while True:
-            comando = input("(1) adicionar ordens por t segundos\n"
-                            "(0) Sair do loop")
-            if comando == 0:
+            __str__()
+            comando = input("(1) continuar por t segundos\n"
+                            "(0) Sair do loop\n")
+            if comando == "0":
                 break
-            elif comando == 1:
+            elif comando == "1":
                 if fila_de_entrada.esta_vazia():
                     input("A fila de entrada já está vazia! [Enter]")
                     break
@@ -104,7 +108,6 @@ while True:
                         break
                     processar_ordem()
                     time.sleep(delay_padrao)
-            __str__()
 
     # Modo Loop automatico: Tempo determinado t
 
@@ -120,13 +123,13 @@ while True:
 
     opcao = input("OPÇÕES: (1) Inserir Ordem | (2) Processar Próxima Ordem\n"
                   "        (3) Undo | (4) Simulação\n"
-                  "        (5) Configurações | (6) Sair")
+                  "        (5) Configurações | (6) Sair\n")
 
     # Adição de uma ordem à fila de entradas
 
     if opcao == 1 or opcao == "1":
-        tipo = input("(C) - Compra / (V) - Venda")
-        while tipo != "C" or tipo != "(C)" or tipo != "V" or tipo != "(V)":
+        tipo = input("(C) - Compra / (V) - Venda\n")
+        while tipo != "C" and tipo != "(C)" and tipo != "V" and tipo != "(V)":
             tipo = input("(C) - Compra / (V) - Venda")
         if tipo == "(C)" or tipo == "C":
             tipo = "C"
@@ -178,10 +181,11 @@ while True:
             print("Ainda não foram adicionadas ordens ao livro de ofertas")
 
     elif opcao == 4 or opcao == "4":
-        numero_ordens = input("Quantas ordens você deseja simular?")
-        while type(quantidade) != int and quantidade <= 0:
+        numero_ordens = input("Quantas ordens você deseja simular?\n")
+        while type(numero_ordens) != int and int(numero_ordens) <= 0:
             numero_ordens = input("ERRO: Digite um número positivo, quantas ordens você deseja simular?")
-        for i in range(quantidade):
+        numero_ordens = int(numero_ordens)
+        for i in range(numero_ordens):
             venda_ou_compra = r.randint(0,1)
         if venda_ou_compra == 0:
             fila_de_entrada.adicionar("C", preco = r.gauss(100,10), quantidade = r.randint(1,10))
@@ -193,16 +197,16 @@ while True:
                        "(1) Modo de exibição\n"
                        "(2) Período por loop\n"
                        "(3) Delay entre cada ordem\n")
-        if config == 1:
+        if config == "1":
             modo_de_adicao = input(
                 "\n Selecione o modo de adição de ordens ao livro de ofertas:\n"
                 "(1) Modo Default (Adicão de todas as ordens instantaneamente)\n"
                 "(2) Modo Loop manual (Adicão de ordens por t segundos, a cada loop)\n"
                 "(3) Modo Loop automatico (Adicão de ordens por t segundos, automaticamente)\n"
                 )
-        if config == 2:
+        if config == "2":
             tempo_padrao = float(input("Loop: "))
-        if config == 3:
+        if config == "3":
             delay_padrao = float(input("Delay: "))        
 
     elif opcao == 6 or opcao == "6":

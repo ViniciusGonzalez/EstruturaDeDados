@@ -1,3 +1,5 @@
+from ordem import Ordem
+
 class ListaCompras:
 
     def __init__(self):
