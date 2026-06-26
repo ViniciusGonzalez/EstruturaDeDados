@@ -1,43 +1,42 @@
-from ordem import Ordem
+from pacote.ordem import Ordem
 
 class ListaCompras:
-
+    
     def __init__(self):
         self.head = None
         self.tail = None
 
     def inserecompra(self, ordem):
-        novo = ordem
+        ordem.next = None
+        ordem.prev = None
 
         if self.head is None:
-            self.head = novo
-            self.tail = novo
+            self.head = ordem
+            self.tail = ordem
             return
 
-        elif ordem.preco > self.head.preco:
-            novo.next = self.head
-            self.head.prev = novo
-            self.head = novo
+        elif ordem.preco >= self.head.preco:
+            ordem.next = self.head
+            self.head.prev = ordem
+            self.head = ordem
             return
 
         atual = self.head
-
-        while atual is not None:
-            if ordem.preco > atual.preco:
-                break
+        while atual is not None and ordem.preco <= atual.preco:
             atual = atual.next
 
         if atual is None:
-            self.tail.next = novo
-            novo.prev = self.tail
-            self.tail = novo
+            self.tail.next = ordem
+            ordem.prev = self.tail
+            self.tail = ordem
 
         else:
             anterior = atual.prev
-            anterior.next = novo
-            novo.prev = anterior
-            novo.next = atual
-            atual.prev = novo
+            if anterior is not None:
+                anterior.next = ordem
+            ordem.prev = anterior
+            ordem.next = atual
+            atual.prev = ordem
 
 
     def removecompra(self, ordem):
@@ -48,25 +47,28 @@ class ListaCompras:
 
         elif ordem == self.head:
             self.head = ordem.next
-            self.head.prev = None
+            if self.head is not None: 
+                self.head.prev = None
 
         elif ordem == self.tail:
             self.tail = ordem.prev
-            self.tail.next = None
-
+            if self.tail is not None: 
+                self.tail.next = None
+                
         else:
-            anterior = ordem.prev
-            proximo = ordem.next
-            anterior.next = proximo
-            proximo.prev = anterior
-
+            if ordem.prev is not None: 
+                ordem.prev.next = ordem.next
+            if ordem.next is not None: 
+                ordem.next.prev = ordem.prev
+            ordem.next = None
+            ordem.prev = None
 
     def mostracompras(self):
 
         atual = self.head
 
         while atual is not None:
-            oferta = atual.ordem
+            oferta = atual
             print(
                 "ID -",oferta.id,
                 "Preço -",oferta.preco,
@@ -82,38 +84,35 @@ class ListaVendas:
         self.tail = None
 
     def inserevenda(self, ordem):
-        novo = ordem
+        ordem.next = None
+        ordem.prev = None
 
         if self.head is None:
-            self.head = novo
-            self.tail = novo
+            self.head = ordem
+            self.tail = ordem
             return
 
-        if ordem.preco < self.head.preco:
-            novo.next = self.head
-            self.head.prev = novo
-            self.head = novo
+        if ordem.preco <= self.head.preco:
+            ordem.next = self.head
+            self.head.prev = ordem
+            self.head = ordem
             return
 
         atual = self.head
-
-        while atual is not None:
-            if ordem.preco < atual.preco:
-                break
+        while atual is not None and ordem.preco >= atual.preco:
             atual = atual.next
 
         if atual is None:
-            self.tail.next = novo
-            novo.prev = self.tail
-            self.tail = novo
-
+            self.tail.next = ordem
+            ordem.prev = self.tail
+            self.tail = ordem
         else:
             anterior = atual.prev
-            anterior.next = novo
-            novo.prev = anterior
-            novo.next = atual
-            atual.prev = novo
-
+            if anterior is not None:
+                anterior.next = ordem
+            ordem.prev = anterior
+            ordem.next = atual
+            atual.prev = ordem
 
     def removevenda(self, ordem):
 
@@ -123,18 +122,18 @@ class ListaVendas:
 
         elif ordem == self.head:
             self.head = ordem.next
-            self.head.prev = None
+            if self.head is not None: 
+                self.head.prev = None
 
         elif ordem == self.tail:
             self.tail = ordem.prev
-            self.tail.next = None
-
+            if self.tail is not None: 
+                self.tail.next = None
         else:
-            anterior = ordem.prev
-            proximo = ordem.next
-            anterior.next = proximo
-            proximo.prev = anterior
-
+            if ordem.prev is not None: 
+                ordem.prev.next = ordem.next
+            if ordem.next is not None: 
+                ordem.next.prev = ordem.prev
 
     def mostravendas(self):
         atual = self.head

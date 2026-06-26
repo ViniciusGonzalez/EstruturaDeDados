@@ -12,8 +12,8 @@ class Ordem:
         timestamp   (float) : momento exato da entrada no sistema
 
     Atributos de encadeamento (usados pelo Livro de Ofertas):
-        prox : referencia para a proxima ordem da lista
-        ant  : referencia para a ordem anterior da lista
+        next : referencia para a proxima ordem da lista
+        prev  : referencia para a ordem anterior da lista
     """
     ultimo_id = 0
 

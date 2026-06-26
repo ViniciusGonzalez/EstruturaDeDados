@@ -1,4 +1,4 @@
-from ordem import Ordem
+from pacote.ordem import Ordem
 
 class Fila:
 
@@ -55,6 +55,11 @@ class Fila:
 #  Armazena os IDs das ordens inseridas com sucesso no livro de
 #  ofertas. Insere e remove sempre pelo TOPO. Operacoes em O(1).
 # ---------------------------------------------------------------------
+class IdPilha:
+    def __init__(self, id):
+        self.id = id
+        self.next = None
+
 class Pilha:
 
     def __init__(self):
@@ -67,9 +72,9 @@ class Pilha:
     def ve_tamanho(self):
         return self.tamanho
 
-    def empilha(self, ordem):
+    def empilha(self, id):
         """Insere um elemento no TOPO da pilha. O(1)."""
-        novo = ordem
+        novo = IdPilha(id)
         novo.next = self.topo   # o novo aponta para quem era o topo
         self.topo = novo        # o novo passa a ser o topo
         self.tamanho += 1
@@ -94,6 +99,6 @@ class Pilha:
         atual = self.topo
         saida = "Topo -> "
         while atual:
-            saida += f"[{atual.id}] -> "
+            saida += f"[{atual.id_ordem}] -> "
             atual = atual.next
         return saida + "Base"

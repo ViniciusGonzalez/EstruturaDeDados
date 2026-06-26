@@ -1,83 +1,37 @@
-import os
 import time
 import random as r
 
 from pacote.ordem import Ordem
 from pacote.entrada_undo import Fila, Pilha
 from pacote.livro_ofertas import ListaCompras, ListaVendas
-from pacote.motor_match import executar_match
+from pacote.motor_match import executar_match, PilhaTransacoes
+from pacote.interface import interface
+from pacote.validacoes import dados_formatados
 
+# Estruturas globais
 fila_de_entrada = Fila()
 lista_vendas = ListaVendas()
 lista_compras = ListaCompras()
 pilha_undo = Pilha()
+pilha_transacoes = PilhaTransacoes()
+
+# Variáveis auxiliares
 modo_de_adicao = "1"
-tempo_padrao = 5
-delay_padrao = 0
+tempo_padrao = 1
+delay_padrao = 0.05
 
-def __str__():
-    os.system("cls")
-    print("="*71)
-    print(f"{'Livro de Ofertas':^70}")
-    print("="*71)
-
-    # Exibição da quantidade de ordens da fila de entrada
-    if fila_de_entrada.tamanho == 1:
-       print(f"Temos {fila_de_entrada.tamanho} ordem aguardando na fila de entrada")
-    else:
-        print(f"Temos {fila_de_entrada.tamanho} ordens aguardando na fila de entrada")
-        if pilha_undo.esta_vazia():
-            print("ID da última ordem adicionada ao Livro: -")
-        else:
-            print(f"ID da última ordem adicionada ao Livro: {pilha_undo.ve_topo().id:010d}")
-        print("-"*70)
-        print(f"{'Operação':>23}"+"|"+f"{'Preço (R$)':^23}"+"|"+f"{'Quantidade':^23}")
-        print("-"*23+"|"+"-"*23+"|"+"-"*23)
-
-    # Exibição das 5 primeiras ordens de venda e compra
-    vendas_atual = lista_vendas.head
-    for i in range(4):
-        if vendas_atual == None:
-            break
-        else:
-            vendas_atual = vendas_atual.next
-    compras_atual = lista_compras.head
-    for i in range(5):
-        print(f"{'[VENDA]':>23}"+"|", end="")
-        if vendas_atual == None:
-            print(f"{'-':>23}"+"|"+f"{'-':>23}")
-        else:
-            print(f"{vendas_atual.valor:>23.2f}".replace(".",",")+"|"+f"{vendas_atual.quantidade:>23}")
-            vendas_atual = vendas_atual.prev
-    print(" "*23+"|"+" "*23+"|"+" "*23)
-    for i in range(5):
-        print(f"{'[COMPRA]':>23}"+"|", end="")
-        if compras_atual == None:
-            print(f"{'-':>23}"+"|"+f"{'-':>23}")
-        else:
-            print(f"{compras_atual.valor:>23.2f}".replace(".",",")+"|"+f"{compras_atual.quantidade:>23}")
-            compras_atual = compras_atual.next
-    print("-"*70)
-    print()
-
-    # Histórico de transações
-    print("="*70)
-    print(f"{'HISTÓRICO DE TRANSAÇÕES':^70}") #TODO TODO TODO
-    print("="*70)
-    # TODO: Colocar o histórico de transações AQUI!!! TODO TODO TODO
-    print("="*70)
-
-def processar_ordem(fila_de_entrada = fila_de_entrada,
-                    lista_vendas = lista_vendas, 
-                    lista_compras = lista_compras, 
-                    pilha_undo = pilha_undo):
+def processar_ordem():
+    if fila_de_entrada.esta_vazia():
+        return
     ordem = fila_de_entrada.desenfileira()
     if ordem.tipo == "C":
         lista_compras.inserecompra(ordem)
     elif ordem.tipo == "V":
         lista_vendas.inserevenda(ordem)
     pilha_undo.empilha(ordem.id)
-    executar_match()
+    executar_match(lista_compras, lista_vendas, pilha_transacoes)
+
+# Loop Principal do Sistema
 
 while True:
 
@@ -87,13 +41,13 @@ while True:
         print("Processando todas as ordens da fila de entrada...")
         while not fila_de_entrada.esta_vazia():
             processar_ordem()
-        __str__()
+        interface(fila_de_entrada, lista_vendas, lista_compras, pilha_undo, pilha_transacoes)
         
     # Modo Loop Manual: Tempo determinado t, controlado via input
 
     elif modo_de_adicao == "2":
         while True:
-            __str__()
+            interface(fila_de_entrada, lista_vendas, lista_compras, pilha_undo, pilha_transacoes)
             comando = input("(1) continuar por t segundos\n"
                             "(0) Sair do loop\n")
             if comando == "0":
@@ -119,35 +73,20 @@ while True:
                     break
                 processar_ordem()
                 time.sleep(delay_padrao)
-            __str__()
+            interface(fila_de_entrada, lista_vendas, lista_compras, pilha_undo, pilha_transacoes)
+
+    # Menu de opções do usuário
 
     opcao = input("OPÇÕES: (1) Inserir Ordem | (2) Processar Próxima Ordem\n"
                   "        (3) Undo | (4) Simulação\n"
-                  "        (5) Configurações | (6) Sair\n")
+                  "        (5) Configurações | (6) Sair\n"
+                  "        Escolha uma opção acima: ")
 
     # Adição de uma ordem à fila de entradas
 
     if opcao == 1 or opcao == "1":
-        tipo = input("(C) - Compra / (V) - Venda\n")
-        while tipo != "C" and tipo != "(C)" and tipo != "V" and tipo != "(V)":
-            tipo = input("(C) - Compra / (V) - Venda")
-        if tipo == "(C)" or tipo == "C":
-            tipo = "C"
-            preço = input("Qual o preço de compra?")
-            while type(preço) != float:
-                preço = input("Qual o preço de compra?")
-            quantidade = input("Quantas ações deseja comprar?")
-            while type(quantidade) != int:
-                quantidade = input("Quantas ações deseja comprar?")
-        elif tipo == "(V)" or tipo == "V":
-            tipo = "V"
-            preço = input("Qual o preço de venda?")
-            while type(preço) != float:
-                preço = input("Qual o preço de venda?")
-            quantidade = input("Quantas ações deseja comprar?")
-            while type(quantidade) != int:
-                quantidade = input("Quantas ações deseja vender?")
-        fila_de_entrada.adicionar(Ordem(tipo, preço, quantidade))
+        tipo, preco, quantidade = dados_formatados()
+        fila_de_entrada.enfileira(tipo, preco, quantidade)
 
     # Processamento da ordem na frente da fila de entrada
 
@@ -158,7 +97,7 @@ while True:
 
     elif opcao == 3 or opcao == "3":
         if not pilha_undo.esta_vazia():
-            undo = pilha_undo.ve_topo()
+            undo = pilha_undo.desempilha()
             compra_atual = lista_compras.head
             venda_atual = lista_vendas.head
             removido = False
@@ -170,7 +109,7 @@ while True:
                 compra_atual = compra_atual.next
             while venda_atual != None and not removido:
                 if venda_atual.id == undo:
-                    lista_vendas.removevende(venda_atual)
+                    lista_vendas.removevenda(venda_atual)
                     removido = True
                     break
             if removido:
@@ -180,17 +119,19 @@ while True:
         else:
             print("Ainda não foram adicionadas ordens ao livro de ofertas")
 
+    # Simulação aleatória de ordens de compra ou venda 
+
     elif opcao == 4 or opcao == "4":
         numero_ordens = input("Quantas ordens você deseja simular?\n")
         while type(numero_ordens) != int and int(numero_ordens) <= 0:
-            numero_ordens = input("ERRO: Digite um número positivo, quantas ordens você deseja simular?")
+            numero_ordens = input("ERRO: Digite um número positivo, quantas ordens você deseja simular?\n")
         numero_ordens = int(numero_ordens)
         for i in range(numero_ordens):
             venda_ou_compra = r.randint(0,1)
-        if venda_ou_compra == 0:
-            fila_de_entrada.adicionar("C", preco = r.gauss(100,10), quantidade = r.randint(1,10))
-        else:
-            fila_de_entrada.adicionar("V", preco = r.gauss(105,10), quantidade = r.randint(1,150))
+            if venda_ou_compra == 0:
+                fila_de_entrada.enfileira("C", preco = r.gauss(105,10), quantidade = r.randint(1,150))
+            elif venda_ou_compra == 1:
+                fila_de_entrada.enfileira("V", preco = r.gauss(100,10), quantidade = r.randint(1,150))
 
     elif opcao == 5 or opcao == "5":
         config = input("\nQual parâmetro deseja configurar:\n"
