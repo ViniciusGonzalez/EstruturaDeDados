@@ -1,11 +1,3 @@
-class Node:
-
-    def __init__(self, ordem):
-
-        self.ordem = ordem
-        self.next = None
-        self.prev = None
-
 class ListaCompras:
 
     def __init__(self):
@@ -13,14 +5,14 @@ class ListaCompras:
         self.tail = None
 
     def inserecompra(self, ordem):
-        novo = Node(ordem)
+        novo = ordem
 
         if self.head is None:
             self.head = novo
             self.tail = novo
             return
 
-        elif ordem.preco > self.head.ordem.preco:
+        elif ordem.preco > self.head.preco:
             novo.next = self.head
             self.head.prev = novo
             self.head = novo
@@ -29,7 +21,7 @@ class ListaCompras:
         atual = self.head
 
         while atual is not None:
-            if ordem.preco > atual.ordem.preco:
+            if ordem.preco > atual.preco:
                 break
             atual = atual.next
 
@@ -46,23 +38,23 @@ class ListaCompras:
             atual.prev = novo
 
 
-    def removecompra(self, node):
+    def removecompra(self, ordem):
 
-        if node == self.head and node == self.tail:
+        if ordem == self.head and ordem == self.tail:
             self.head = None
             self.tail = None
 
-        elif node == self.head:
-            self.head = node.next
+        elif ordem == self.head:
+            self.head = ordem.next
             self.head.prev = None
 
-        elif node == self.tail:
-            self.tail = node.prev
+        elif ordem == self.tail:
+            self.tail = ordem.prev
             self.tail.next = None
 
         else:
-            anterior = node.prev
-            proximo = node.next
+            anterior = ordem.prev
+            proximo = ordem.next
             anterior.next = proximo
             proximo.prev = anterior
 
@@ -88,15 +80,14 @@ class ListaVendas:
         self.tail = None
 
     def inserevenda(self, ordem):
-        novo = Node(ordem)
+        novo = ordem
 
         if self.head is None:
             self.head = novo
             self.tail = novo
             return
 
-
-        if ordem.preco < self.head.ordem.preco:
+        if ordem.preco < self.head.preco:
             novo.next = self.head
             self.head.prev = novo
             self.head = novo
@@ -105,7 +96,7 @@ class ListaVendas:
         atual = self.head
 
         while atual is not None:
-            if ordem.preco < atual.ordem.preco:
+            if ordem.preco < atual.preco:
                 break
             atual = atual.next
 
@@ -122,23 +113,23 @@ class ListaVendas:
             atual.prev = novo
 
 
-    def removevenda(self, node):
+    def removevenda(self, ordem):
 
-        if node == self.head and node == self.tail:
+        if ordem == self.head and ordem == self.tail:
             self.head = None
             self.tail = None
 
-        elif node == self.head:
-            self.head = node.next
+        elif ordem == self.head:
+            self.head = ordem.next
             self.head.prev = None
 
-        elif node == self.tail:
-            self.tail = node.prev
+        elif ordem == self.tail:
+            self.tail = ordem.prev
             self.tail.next = None
 
         else:
-            anterior = node.prev
-            proximo = node.next
+            anterior = ordem.prev
+            proximo = ordem.next
             anterior.next = proximo
             proximo.prev = anterior
 
@@ -147,31 +138,10 @@ class ListaVendas:
         atual = self.head
 
         while atual is not None:
-            oferta = atual.ordem
+            oferta = atual
             print(
                 "ID -",oferta.id,
                 "Preço -",oferta.preco,
                 "Quantidade -",oferta.quantidade
             )
             atual = atual.next
-
-
-class LivroOfertas:
-
-    def __init__(self):
-        self.compras = ListaCompras()
-        self.vendas = ListaVendas()
-
-    def insereordem(self, ordem):
-        if ordem.tipo == 'C':
-            self.compras.inserecompra(ordem)
-        else:
-            self.vendas.inserevenda(ordem)
-
-    def mostrar(self):
-        print("*** COMPRAS ***")
-        self.compras.mostracompras()
-        print("\n*** VENDAS ***")
-        self.vendas.mostravendas()
-
-
