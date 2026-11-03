@@ -28,7 +28,7 @@ Para garantir controle estrito sobre a complexidade de tempo e espaço, todas as
 
 ---
 
-## ⚙️ Funcionamento da Matching Engine
+## Funcionamento da Matching Engine
 
 Cada ordem de negociação possui os seguintes atributos:
 * **ID (`int`):** Identificador único da ordem[cite: 1].
